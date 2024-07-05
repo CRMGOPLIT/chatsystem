@@ -1,0 +1,539 @@
+
+
+
+
+<%- include('layout/header.ejs') %>
+<style>
+    .chat-container {
+        height: 400px;
+        overflow-y: scroll;
+    }
+
+    .message {
+        margin-bottom: 10px;
+    }
+
+    .tab {
+        float: left;
+        border: 1px solid #ccc;
+        width: 30%;
+        height: 502px;
+        background-image: url(assets/bg-coe1.png);
+    }
+
+    /* Style the buttons inside the tab */
+    .tab button {
+        display: block;
+        background-color: inherit;
+        color: #000;
+        padding: 10px 16px;
+        width: 100%;
+        border: none;
+        outline: none;
+        text-align: left;
+        cursor: pointer;
+        transition: 0.3s;
+        font-size: 17px;
+        border-bottom: 1px solid #b4b0b0;
+    }
+
+    /* Change background color of buttons on hover */
+    .tab button:hover {
+        background-color: #ddd;
+    }
+
+    /* Create an active/current "tab button" class */
+    .tab button.active {
+        background-color: #eee;
+    }
+
+    /* Style the tab content */
+    .tabcontent {
+        float: left;
+        padding: 0px;
+        border: 1px solid #ccc;
+        width: 70%;
+        height: 450px;
+    }
+
+    .search_tab {
+        padding-left: 20px;
+        padding-right: 20px;
+        border-bottom: 1px solid #b4b0b0;
+        padding-bottom: 4px;
+        padding-top: 4px;
+        background-image: url(assets/bg-coe1.png);
+        box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+    }
+
+    .search_tab .input-group input.form-control {
+        height: 41px !important;
+        border-right: 0px;
+        border-top-left-radius: 30px;
+        border-bottom-left-radius: 30px;
+    }
+
+    .search_tab .input-group .input-group-btn button.btn.btn-default {
+        padding: 8px 20px;
+        border-top: 1px solid #bdb6b6;
+        border-right: 1px solid #bbb;
+        border-top-right-radius: 30px;
+        border-bottom-right-radius: 30px;
+        background-color: #eee;
+    }
+
+    .conversion_sec {
+        padding: 2px 20px;
+        box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+        background-image: url(assets/bg-coe.png);
+
+    }
+
+    .mess_content_sec {
+        /* padding: 15px; */
+        height: 406px;
+        overflow-x: auto;
+        background-color: #fff;
+        background-image: url(assets/bgwhatsap.jpg);
+        background-size: contain;
+    }
+
+    .reply_conversion {
+        margin-top: 15px;
+        background-color: #00ab9b;
+        width: 55%;
+        color: #ffff;
+        padding: 10px;
+        border-radius: 5px;
+        margin-left: 20px;
+        float: left;
+    }
+
+    .receive_conversion {
+        background-color: #6fbced;
+        padding: 10px;
+        margin-top: 15px;
+        border-radius: 5px;
+        width: 55%;
+        margin-bottom: 15px;
+        float: right;
+        margin-right: 25px;
+        color: #fff;
+    }
+
+    .reply_conversion .triangle {
+        position: relative;
+    }
+
+    .reply_conversion .triangle:before {
+        content: "";
+        top: -10px;
+        left: -40px;
+        position: absolute;
+        background: transparent;
+        height: 0px;
+        width: 0px;
+        border-left: 15px solid transparent;
+        border-bottom: 15px solid transparent;
+        border-right: 20px solid #00ab9b;
+    }
+
+    .receive_conversion .trangle1 {
+        position: relative;
+    }
+
+    .receive_conversion .trangle1:after {
+        content: "";
+        position: absolute;
+        top: -10px;
+        right: -40px;
+        background: transparent;
+        height: 0px;
+        width: 0px;
+        border-right: 15px solid transparent;
+        border-bottom: 15px solid transparent;
+        border-left: 20px solid #6fbced;
+    }
+
+    .reply_conversion .date_time_sec,
+    .receive_conversion .date_time_sec {
+        text-align: right;
+    }
+
+    .receive_conversion:focus {
+        outline: none;
+    }
+
+    .reply_conversion:focus {
+        outline: none;
+    }
+
+    .conversion_sec h4 {
+        font-weight: 600;
+        color: #fff;
+    }
+
+    .conversion_sec .star {
+        text-align: right;
+        color: #fff;
+        margin-top: 10px;
+    }
+
+    .mess_content_sec::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+        background-color: #F5F5F5;
+    }
+
+    .mess_content_sec::-webkit-scrollbar {
+        width: 6px;
+        background-color: #F5F5F5;
+    }
+
+    .mess_content_sec::-webkit-scrollbar-thumb {
+        background-color: #0000002e;
+    }
+
+    .main_border {
+        /* box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px; */
+        padding-left: 0px;
+        padding-right: 0px;
+        margin: 0 auto;
+    }
+
+    .tab_sec_data {
+        height: 451px;
+        overflow-y: hidden;
+        white-space: nowrap;
+        transition: overflow-x 0.5s ease;
+
+    }
+
+    .tab_sec_data:hover {
+        /*height: 481px;*/
+        overflow-y: scroll;
+    }
+
+    .tab_sec_data::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+        background-color: #F5F5F5;
+    }
+
+    .tab_sec_data::-webkit-scrollbar {
+        width: 6px;
+        background-color: #F5F5F5;
+    }
+
+    .tab_sec_data::-webkit-scrollbar-thumb {
+        background-color: #9a9a9a8c;
+    }
+
+    /* body {
+        background-color: #abd9e9;
+    } */
+    .online-status{
+        color: green; font-size: 12px; margin-left: 22px;
+    }
+    .offline-status{
+        color: red; font-size: 12px; margin-left: 22px;
+    }
+    #content{
+        padding-top:0px !important;
+    }
+</style>
+
+<div class="container-fluid" style="margin-top:0px;padding:0px;">
+    <div class="row">
+        <div class="col-md-12" style="padding:0px;">
+            <div class="main_border">
+                <div class="tab">
+                    <div class="search_tab">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Search" id="search">
+                                    <div class="input-group-btn">
+                                        <button class="btn btn-default" type="submit">
+                                            <i class="glyphicon glyphicon-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="hdnusers" value="<%= counsellorid %>">
+                    <div class="tab_sec_data">
+                        <!-- <button class="tablinks" id="defaultOpen"> -->
+                            <% if(users.length> 0){
+                                for(let i=0; i<users.length;i++){ %>
+                            
+                                    <button class="tablinks list-group-item list-group-item-dark cursor-pointer user-list"
+                                        data-id="<%=users[i]['f_Student_id'] %>">
+                                        <!-- <img src="<%='http://192.168.1.113:3000/'+  users[i]['image'] %>" alt="" width="100px" height="100px"> -->
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <span style="color: #d84315"><i class="fa fa-user-circle-o" aria-hidden="true"></i></span> <label name="list_username"><%= users[i]['f_First_name'] %> (<%=users[i]['f_Student_id'] %>)</label>
+                                                <br>
+                                                    <% if(users[i]['is_online']==1){ %>
+                                                        <sub class="online-status"  id="<%= users[i]['f_Student_id']%>-status"> <i class="fa fa-circle" aria-hidden="true"></i> <label name="OnlineStatus">Online</label> </sub>
+                                                        <% }else{ %>
+                                                            <sub class="offline-status"  id="<%= users[i]['f_Student_id']%>-status"><i class="fa fa-circle" aria-hidden="true"></i> <label name="OnlineStatus">Offline</label></sub>
+                                                            <% } %>
+                                        </div>
+                                    </div>
+                                                
+                                    </button>
+                                <% } } %>
+                        <!-- </button> -->
+                        
+                    </div>
+                </div>
+
+
+                <div id="London" class="tabcontent">
+                    <div class="conversion_sec">
+                        <div class="row">
+                            <div class="name_sec" style="width:49%;">
+                                <h4><i class="fa fa-user-circle-o" aria-hidden="true"></i> <label name="Conversion_Section_UserName"></label></h4>
+                            </div>
+                            <div class="star" style="width:49%;text-align: right;">
+                                <!-- <i class="fa fa-star" aria-hidden="true"></i> -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mess_content_sec">
+                        <div id="chat-container">
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="send_message">
+                    <div class="div_sec" style="width:30%;"></div>
+                    <div class="send_message_sec">
+                        <form action=" " id="chat-form">
+                            <input type="text" placeholder="Enter Message" name="message" id="message" class="border"
+                                style="padding: 15px 20px;margin-top:0px" required>
+                        
+                            <input type="submit" value="Send Message" class="btn btn-primary"
+                                style="padding: 15px 29px;background-color:#092c64;border:none; ">
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+
+
+
+
+<!-- <a href="/logout">Logut</a> -->
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+
+
+
+    var sender_id=  $("#hdnusers").val();
+    var receiver_id ;
+    var socket = io('/user-namespace',{
+        auth:{
+            token: sender_id
+        }
+    })
+
+    $(document).ready(function(){
+        $('.user-list').click(function(){
+            var username = $(this).find("label[name='list_username']").text();
+            $(".conversion_sec").find("label[name='Conversion_Section_UserName']").text(username);
+         var userId =   $(this).attr('data-id');
+         receiver_id = userId;
+
+            $('.start-head').hide();
+            $('.chat-section').show();
+            $("#message").val('');
+            socket.emit('existsChat',{sender_id:sender_id, receiver_id: receiver_id })
+        })
+    })
+
+
+    //update user online status
+    socket.on('getOnlineUser',function(data){
+
+        $('#'+data.user_id+'-status').find("label[name='OnlineStatus']").text('Online')
+            $('#' + data.user_id + '-status').removeClass('offline-status')
+                $('#' + data.user_id + '-status').addClass('online-status')
+
+
+    })
+
+    //update user offline status
+        socket.on('getOfflineUser', function (data) {
+            $('#' + data.user_id + '-status').find("label[name='OnlineStatus']").text('Offline')
+            $('#' + data.user_id + '-status').addClass('offline-status')
+            $('#' + data.user_id + '-status').removeClass('online-status')
+
+        });
+
+
+        //chat save of user
+
+        $('#chat-form').submit(function(event){
+
+            event.preventDefault();
+            var rawmessage = $('#message').val();
+            var message = rawmessage.replace(/'/g, "");
+            if(sender_id==undefined || receiver_id==undefined){
+                alert("No user selected. Messages not allowed.");
+                return;
+            }else{
+                if(getstatusofcurrentuser()=="0"){
+                    SendNotification(message, receiver_id);   
+                       
+                }
+            $.ajax({
+                url:'/save-chat-sql',
+                type:'POST',
+                data:{sender_id:sender_id, receiver_id: receiver_id,message:message},
+
+                success:function(response){
+                    if(response.success){
+                        $('#message').val();
+
+                        let chat= response.data[0].message;
+
+                        var date = new Date();
+                        var s = date.getHours()<12?'AM':'PM';
+                        var today = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + (date.getHours()>12?date.getHours()-12:date.getHours()) + ":" + date.getMinutes() + " " + s;
+
+
+                        let html = `
+                                      <div class="current-user-chat">
+                                            <div class="triangle triangle1"></div>
+                                            <p>`+ chat + `</p>
+                                            <h6 class="date_time_sec">`+today+`</h6>
+                                            
+                                        </div>
+                        `;
+                        $('#chat-container').append(html);
+                        $('#message').val('');
+                        socket.emit('newChat',response.data[0]);
+                        scrollchat();
+                    }else{
+                        alert(data.message);
+                    }
+
+                }
+            })
+        }
+        });
+
+        socket.on('loadNewChat',function(data){
+
+            
+             if(sender_id == data.receiver_id && receiver_id == data.sender_id){
+                                        var date = new Date();
+                 var s = date.getHours() < 12 ? 'AM' : 'PM';
+                 var today = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + (date.getHours() > 12 ? date.getHours() - 12 : date.getHours()) + ":" + date.getMinutes() + " " + s;
+
+                let html = `
+                                      <div class="distance-user-chat reply_conversion">
+                                            <div class="triangle"></div>
+                                            <p>`+ data.message + `</p>
+                                            <h6 class="date_time_sec">`+today+`</h6> 
+
+                                        </div>
+                        `;
+                $('#chat-container').append(html);
+            }
+             scrollchat();
+
+        });
+
+        socket.on('loadChats', function (data) {
+  
+                    $('#chat-container').html('');
+                    var chats = data.chats;
+                    let html= '';
+                    for(let x=0; x<chats.length;x++){
+
+                        let addClass = '';
+                        if(chats[x]['sender_id']==sender_id){
+                            addClass = 'current-user-chat'
+                        }else{
+                            addClass = 'distance-user-chat'
+                        }
+                        var datetimestamp = chats[x]['f_creationdate'];
+
+                        var dateTruncated = datetimestamp.slice(0, 10);
+                        html+=  `
+                                 <div class='`+addClass+`'>
+                                            <div class="triangle triangle1"></div>
+                                            <p>`+ chats[x]['message'] + `</p>
+                                            
+                                            <h6>`+ dateTruncated + `   `+ chats[x]['timestamp'] + `</h6>
+                                                                                        
+                                        </div>
+                        `;
+                    }
+                     $('#chat-container').append(html);
+
+                     scrollchat();
+
+            })
+
+
+
+        function scrollchat(){
+
+             $('#chat-container').animate({
+                scrollTop:  $('#chat-container').offset().top+ $('#chat-container')[0].scrollHeight
+
+             },0)
+            }
+   
+            $("#search").on("keyup", function () {
+                    var value = $(this).val().toLowerCase();
+                    $(".tab_sec_data button").filter(function () {
+                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                    });
+            });
+            function getstatusofcurrentuser(){
+                var status = "1";
+                $(".tab_sec_data button").each(function(){
+                    var btnid = $(this).data('id');
+                    if(btnid==receiver_id){
+                        var s = $(this).find("label[name='OnlineStatus']").text();
+                        if(s=="Offline"){
+                            status="0";
+                        }
+                    }
+                });
+                return status;
+            }
+            function SendNotification(message,userid){
+                $.ajax({
+                     
+                    url: "http://crmdemoapi.global-opportunities.co.in/Api/Common/SendMessageNotificationToOfflineStudent?UserId="+userid+"&Message="+message+"", // Replace with your API endpoint URL
+                    type: 'Get',
+                    contentType: 'application/json',
+                    success: function (response) {
+                        console.log('Notification sent successfully:', response);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error sending notification:', status, error);
+                    }
+                });
+            }
+
+</script>
+
+
+<%- include('layout/footer.ejs') %>
+
+
+
+
